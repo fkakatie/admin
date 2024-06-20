@@ -6,7 +6,7 @@
   gap: var(--spacing-m);
   margin: var(--spacing-m) 0 var(--spacing-xs);
   padding: 0;
-  color: var(--gray-400);
+  color: var(--gray-600);
   font-size: var(--body-size-m);
 }
 

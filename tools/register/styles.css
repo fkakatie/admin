@@ -1,0 +1,16 @@
+.reset-wrapper {
+  justify-content: flex-end;
+}
+
+form[aria-hidden='true'],
+table[aria-hidden='true'],
+table tr.user,
+table tr.app,
+#register-reset[disabled] {
+  display: none;
+}
+
+table.user tr.user,
+table.app tr.app {
+  display: table-row;
+}
