@@ -68,7 +68,7 @@ export function swapIcons() {
 // }
 
 /**
- * Decorates links with appropriate classes to style them as buttons/
+ * Decorates links with appropriate classes to style them as buttons
  * @param {HTMLElement} main The main container element
  */
 function decorateButtons(main) {
