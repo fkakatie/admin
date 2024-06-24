@@ -135,12 +135,6 @@ main > .section:last-of-type {
   border-bottom-right-radius: var(--rounding-xl);
 }
 
-@media (width >= 900px) {
-  main > .section > div {
-    padding: var(--spacing-xl);
-  }
-}
-
 /* section metadata */
 main .section.light {
   background-color: var(--light-color);
@@ -433,7 +427,8 @@ fieldset {
   background-color: transparent;
 }
 
-label {
+label,
+legend {
   display: block;
   margin-bottom: 0.5em;
 }
@@ -603,6 +598,8 @@ input[type='color'] ~ span {
   background: linear-gradient(to right, red, yellow, lime, cyan, blue, magenta, red);
 }
 
+.form-field + table,
+table + .form-field,
 .form-field + .form-field {
   margin-top: var(--spacing-l);
 }
