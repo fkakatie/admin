@@ -84,7 +84,7 @@ function registerListeners(doc) {
 
   // retrieve type query param
   const params = new URLSearchParams(window.location.search);
-  const initialType = params.get('type').toLowerCase();
+  const initialType = params.get('type');
   const validTypes = [...radios].map((r) => r.value);
   if (validTypes.includes(initialType)) {
     const radio = CREDENTIALS_FORM.querySelector(`input[value="${initialType}"]`);
