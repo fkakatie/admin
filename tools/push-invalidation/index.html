@@ -19,7 +19,11 @@
     <div>
       <h1>BYOCDN Push Invalidation Validator</h1>
       <p>
-        The <strong>Push Invalidation Validator</strong> tool ensures your content delivery network (CDN) automatically purges outdated content on your production domain (e.g. <code>www.yourdomain.com</code>), whenever an author publishes changes. Use this tool to validate your project's vendor-specific properties and credentials (as found in the Excel workbook named <code>.helix/config.xlsx</code> in Sharepoint or the Google Sheet named <code>.helix/config</code> in Google Drive).
+        The <strong>Push Invalidation Validator</strong> tool ensures your content delivery network (CDN) automatically
+        purges outdated content on your production domain (e.g. <code>www.yourdomain.com</code>), whenever an author
+        publishes changes. Use this tool to validate your project's vendor-specific properties and credentials (as found
+        in the Excel workbook named <code>.helix/config.xlsx</code> in Sharepoint or the Google Sheet named
+        <code>.helix/config</code> in Google Drive).
       </p>
     </div>
     <!-- FORM -->
@@ -29,26 +33,26 @@
         <fieldset class="form-field radio-field">
           <legend>CDN</legend>
 
-          <ul role="row">
-            <li role="gridcell">
+          <ul role="radiogroup">
+            <li>
               <label for="akamai">
                 <img src="./assets/akamai-logo.svg" alt="Akamai">
                 <input id="akamai" name="type" value="akamai" type="radio" required />
               </label>
             </li>
-            <li role="gridcell">
+            <li>
               <label for="fastly">
                 <img src="./assets/fastly-logo.svg" alt="Fastly">
                 <input id="fastly" name="type" value="fastly" type="radio" required />
               </label>
             </li>
-            <li role="gridcell">
+            <li>
               <label for="cloudflare">
                 <img src="./assets/cloudflare-logo.svg" alt="Cloudflare">
                 <input id="cloudflare" name="type" value="cloudflare" type="radio" required />
               </label>
             </li>
-            <li role="gridcell">
+            <li>
               <label for="cloudfront">
                 <img src="./assets/cloudfront-logo.svg" alt="Cloudfront">
                 <span>Cloudfront</span>
