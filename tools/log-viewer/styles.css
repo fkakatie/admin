@@ -1,0 +1,99 @@
+@media (width >= 900px) {
+  .log-viewer form {
+    display: grid;
+    grid-template:
+      'url timeframe' auto
+      'datetime datetime' 
+      'button button' 1fr / 1fr 1fr;
+    align-items: baseline;
+    gap: 0 var(--spacing-l);
+  }
+
+  .log-viewer form > .url-field {
+    grid-area: url;
+  }
+
+  .log-viewer form > .timeframe-wrapper {
+    grid-area: timeframe;
+  }
+
+  .log-viewer form > .datetime-wrapper {
+    grid-area: datetime;
+  }
+
+  .log-viewer form > .button-wrapper {
+    grid-area: button;
+  }
+}
+
+.log-viewer form .timeframe-wrapper {
+  display: grid;
+  
+  /* grid-template-columns: auto 1fr auto; */
+  align-items: end;
+  gap: var(--spacing-l);
+}
+
+.log-viewer form ul.menu li:last-child {
+  position: relative;
+  margin-top: var(--spacing-m);
+}
+
+.log-viewer form ul.menu li:last-child::before {
+  content: '';
+  position: absolute;
+  top: calc((-0.5 * var(--spacing-m)) - (var(--border-m) / 2));
+  left: 0;
+  right: 0;
+  height: var(--border-m);
+  background-color: var(--gray-200);
+}
+
+.log-viewer .datetime-wrapper {
+  display: grid;
+  gap: var(--spacing-l);
+}
+
+.log-viewer .datetime-wrapper .form-field {
+  margin-top: 0;
+}
+
+@media (width >= 740px) {
+  .log-viewer .datetime-wrapper {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.log-viewer table[aria-hidden='true'],
+.log-viewer table span[aria-hidden='true'] {
+  display: none;
+}
+
+.log-viewer table .log-method code,
+.log-viewer table .log-status span {
+  border-radius: var(--rounding-m);
+  padding: var(--spacing-xs) var(--spacing-s);
+}
+
+.log-viewer table .log-status span {
+  display: inline-block;
+  background-color: var(--gray-900);
+  color: white;
+}
+
+.log-viewer table .log-status .http1 {
+  background-color: var(--blue-900);
+}
+
+.log-viewer table .log-status .http2 {
+  background-color: var(--green-900);
+}
+
+.log-viewer table .log-status .http3 {
+  background-color: var(--yellow-900);
+}
+
+.log-viewer table .log-status .http4,
+.log-viewer table .log-status .http5 {
+  background-color: var(--red-900);
+}
