@@ -236,11 +236,9 @@ function registerListeners(doc) {
       showLoadingButton(e.submitter);
       const url = new URL(path);
       const [,, owner, repo] = url.pathname.split('/');
-      const params = new URLSearchParams(url.search);
-      params.set('extensionId', 'cookie');
-      url.search = params.toString();
+      url.searchParams.set('extensionId', 'cookie');
 
-      const loginWindow = window.open(url.toString(), 'Sign in', 'popup,top=233,left=233,width=700,height=467');
+      const loginWindow = window.open(url, 'Sign in', 'popup,top=233,left=233,width=700,height=467');
       loginWindow.focus();
 
       const pollTimer = setInterval(() => {
