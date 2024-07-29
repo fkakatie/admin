@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 // utility functions
 function getFormData(form) {
   const data = {};
@@ -36,22 +37,19 @@ function getFormData(form) {
   return data;
 }
 
+function debounce(func, wait) {
+  let timeout;
+  // eslint-disable-next-line func-names
+  return function (...args) {
+    const context = this;
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(context, args), wait);
+  };
+}
+
 // date management
 function pad(number) {
   return number.toString().padStart(2, '0');
-}
-
-function toReadableDate(date) {
-  const [day, mm, dd, yyyy] = date.toString().split(' ');
-  const hours = date.getHours();
-  // eslint-disable-next-line no-nested-ternary
-  const adjustedHours = hours === 0
-    ? 12 : hours > 12
-      ? hours - 12 : hours;
-  const minutes = date.getMinutes();
-  const suffix = hours >= 12 ? 'pm' : 'am';
-  const str = `${day}, ${mm} ${dd}, ${yyyy} at ${pad(adjustedHours)}:${pad(minutes)} ${suffix}`;
-  return str;
 }
 
 function toDateTimeLocal(date) {
@@ -66,7 +64,16 @@ function toDateTimeLocal(date) {
   return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
-function toISO(str) {
+function toUTCDate(date) {
+  const dd = pad(date.getUTCDate());
+  const mm = pad(date.getUTCMonth() + 1);
+  const yyyy = date.getUTCFullYear();
+  const hours = pad(date.getUTCHours());
+  const minutes = pad(date.getUTCMinutes());
+  return `${mm}/${dd}/${yyyy} ${hours}:${minutes} UTC`;
+}
+
+function toISODate(str) {
   const date = new Date(str);
   return date.toISOString();
 }
@@ -111,94 +118,6 @@ function enableForm(form) {
   });
 }
 
-function writePathURL(data) {
-  const {
-    route, ref, repo, owner, path,
-  } = data;
-  let siteURL = `https://${ref}--${repo}--${owner}.hlx.`;
-  if (route === 'preview') {
-    siteURL += `page${path}`;
-    return siteURL;
-  }
-  if (route === 'publish') {
-    siteURL += `live${path}`;
-    return siteURL;
-  }
-  if (route === 'config') {
-    return `https://admin.hlx.page/${route}/${data.org}/sites/${data.site}.json`;
-  }
-  if (route === 'code' || route === 'job') {
-    return `https://github.com/${owner}/${repo}/tree/${ref}`;
-  }
-  return false;
-}
-
-function buildCell(data, type) {
-  const cell = document.createElement('td');
-  if (type) {
-    cell.className = `log-${type}`;
-    if (type === 'time') {
-      const date = new Date(data);
-      cell.textContent = toReadableDate(date);
-    } else if (type === 'path') {
-      const url = writePathURL(data);
-      cell.innerHTML = `<a href="${url}" target="_blank">${data.path}</a>`;
-    } else if (type === 'method') {
-      cell.innerHTML = `<code>${data}</code>`;
-    } else if (type === 'status') {
-      cell.innerHTML = `<span class="http${Math.floor(data / 100) % 10}">${data}</span>`;
-    } else if (type === 'duration') {
-      cell.dataset.type = 'numerical';
-      cell.textContent = `${(data / 1000).toFixed(1)} s`;
-    } else {
-      cell.textContent = data;
-    }
-  } else {
-    cell.textContent = data;
-  }
-  return cell;
-}
-
-function clearTable(table) {
-  table.parentElement.setAttribute('aria-hidden', true);
-  table.innerHTML = '';
-}
-
-function displayLogs(logs) {
-  const table = document.querySelector('table');
-  table.setAttribute('aria-hidden', false);
-  const body = table.querySelector('tbody');
-  logs.forEach((log) => {
-    // route determines path
-    const {
-      timestamp, route, method, status, duration,
-    } = log;
-    const row = document.createElement('tr');
-    const timeCell = buildCell(timestamp, 'time');
-    const routeCell = buildCell(route || 'event');
-    const pathCell = buildCell(log, 'path');
-    const methodCell = buildCell(method || '', 'method');
-    const statusCell = buildCell(status || '', 'status');
-    const durationCell = buildCell(duration || '', 'duration');
-    // eslint-disable-next-line max-len
-    [timeCell, routeCell, pathCell, methodCell, statusCell, durationCell].forEach((cell) => {
-      row.append(cell);
-    });
-    body.append(row);
-  });
-}
-
-async function fetchLogs(owner, repo) {
-  const from = document.getElementById('date-from');
-  const fromValue = encodeURIComponent(toISO(from.value));
-  const to = document.getElementById('date-to');
-  const toValue = encodeURIComponent(toISO(to.value));
-  const url = `https://admin.hlx.page/log/${owner}/${repo}/main?from=${fromValue}&to=${toValue}`;
-  const req = await fetch(url, { credentials: 'include' });
-  const res = await req.json();
-  displayLogs(res.entries);
-}
-
 function enableLogin(owner, repo, form) {
   const url = new URL(`https://admin.hlx.page/login/${owner}/${repo}/main`);
   url.searchParams.set('extensionId', 'cookie');
@@ -210,23 +129,211 @@ function enableLogin(owner, repo, form) {
     if (loginWindow.closed) {
       clearInterval(pollTimer);
       enableForm(form);
-      fetchLogs(owner, repo);
+      // eslint-disable-next-line no-use-before-define
+      fetchLogs(owner, repo, form);
     }
   }, 1500);
 }
 
-function updateTableCaption(fromTime, toTime = false) {
-  const from = document.getElementById('logs-from');
-  const to = document.getElementById('logs-to');
-  const spanTo = document.getElementById('to');
-  from.textContent = fromTime;
-
-  to.setAttribute('aria-hidden', !toTime);
-  spanTo.setAttribute('aria-hidden', !toTime);
-  to.textContent = toTime || '';
+function updateTableDisplay(show, table = document.querySelector('table')) {
+  const results = table.querySelector('tbody.results');
+  const noResults = table.querySelector('tbody.no-results');
+  const error = table.querySelector('tbody.error');
+  const loading = table.querySelector('tbody.loading');
+  [results, noResults, error, loading].forEach((tbody) => {
+    tbody.setAttribute('aria-hidden', show !== tbody.className);
+  });
+  const filter = document.getElementById('logs-filter');
+  filter.value = '';
+  filter.disabled = show !== 'results';
 }
 
-function updateTimeframe(value, label) {
+function updateTableError(code, text) {
+  const messages = {
+    400: 'The request for logs could not be processed.',
+    401: 'You need to sign in to view the requested logs.',
+    403: 'You do not have permission to view the requested logs.',
+    404: 'The requested logs could not be found.',
+  };
+  // eslint-disable-next-line no-param-reassign
+  if (!text) text = messages[code] || 'Unable to display the requested logs.';
+  const error = document.querySelector('table > tbody.error');
+  const title = error.querySelector('strong');
+  const message = error.querySelector('p:last-of-type');
+  title.textContent = `${code} Error`;
+  message.textContent = text;
+  updateTableDisplay('error', error.closest('table'));
+}
+
+function clearTable(table) {
+  table.innerHTML = '';
+  updateTableDisplay('no-results', table.closest('table'));
+}
+
+class RewrittenData {
+  constructor(data) {
+    this.data = data;
+  }
+
+  timestamp(value) {
+    if (!value) return '-';
+    return toUTCDate(new Date(value));
+  }
+
+  user(value) {
+    if (!value) return '-';
+    return `<a href="mailto:${value}">${value}</a>`;
+  }
+
+  path(value) {
+    const writeA = (href, text) => `<a href="https://${href}" target="_blank">${text}</a>`;
+    // path is created based on route/source
+    const type = this.data.route || this.data.source;
+    if (!type) return value || '-';
+    const ADMIN = 'admin.hlx.page';
+    if (type === 'code') {
+      return writeA(`github.com/${this.data.owner}/${this.data.repo}/tree/${this.data.ref}`, value);
+    }
+    if (type === 'config') {
+      return writeA(`${ADMIN}/config/${this.data.org}/sites/${this.data.site}.json`, value);
+    }
+    if (type === 'index' || type === 'live') {
+      return writeA(`${this.data.ref}--${this.data.repo}--${this.data.owner}.hlx.live${value}`, value);
+    }
+    if (type === 'indexer') {
+      // sometimes ms appears in indexer path?
+      const updateMs = !this.data.duration;
+      if (updateMs) this.data.duration = 0;
+      const changes = this.data.changes.map((change) => {
+        const segments = change.split(' ');
+        const segment = segments.find((s) => s.startsWith('/'));
+        if (updateMs) {
+          const ms = segments.find((s) => s.endsWith('ms'));
+          if (ms && ms !== segment) {
+            const number = Number.parseInt(ms.replace('ms', ''), 10);
+            if (!Number.isNaN(number)) this.data.duration += number;
+          }
+        }
+        return segment ? writeA(`${ADMIN}/index/${this.data.owner}/${this.data.repo}/${this.data.ref}${segment}`, segment) : '/';
+      });
+      return changes.join(', <br />');
+    }
+    if (type === 'job' || type.includes('-job')) {
+      return writeA(`${ADMIN}/job/${this.data.owner}/${this.data.repo}/${this.data.ref}${value}/details`, value);
+    }
+    if (type === 'preview') {
+      return writeA(`${this.data.ref}--${this.data.repo}--${this.data.owner}.hlx.page${value}`, value);
+    }
+    if (type === 'sitemap') {
+      const paths = this.data.updated.map(
+        (update) => writeA(`${this.data.ref}--${this.data.repo}--${this.data.owner}.hlx.live${update}`, update),
+      );
+      return paths.join(', <br />');
+    }
+    if (type === 'status') {
+      return writeA(`${ADMIN}/status/${this.data.owner}/${this.data.repo}/${this.data.ref}${value}`, value);
+    }
+    // eslint-disable-next-line no-console
+    console.warn('unhandled log type:', type, this.data);
+    return value || '-';
+  }
+
+  errors(value) {
+    if (!value || value.length === 0) return '-';
+    return value.join(', <br />');
+  }
+
+  method(value) {
+    if (!value) return '-';
+    return `<code>${value}</code>`;
+  }
+
+  status(value) {
+    if (!value) return '-';
+    const badge = document.createElement('span');
+    badge.textContent = value;
+    badge.className = `status-light http${Math.floor(value / 100) % 10}`;
+    return badge.outerHTML;
+  }
+
+  duration(value) {
+    if (!value) return '-';
+    return `${(value / 1000).toFixed(1)} s`;
+  }
+
+  // rewrite data based on key
+  rewrite(keys) {
+    keys.forEach((key) => {
+      if (this[key]) {
+        this.data[key] = this[key](this.data[key]);
+      }
+    });
+  }
+}
+
+function buildLog(data) {
+  const row = document.createElement('tr');
+  const cols = [
+    'timestamp',
+    'route',
+    'source',
+    'org',
+    'site',
+    'user',
+    'owner',
+    'repo',
+    'ref',
+    'path',
+    // 'updated',
+    // 'changes',
+    'unmodified',
+    'errors',
+    'method',
+    'status',
+    'duration',
+  ];
+  const formattedData = new RewrittenData(data);
+  formattedData.rewrite(cols);
+
+  cols.forEach((col) => {
+    const cell = document.createElement('td');
+    if (formattedData.data[col]) cell.innerHTML = formattedData.data[col];
+    else cell.textContent = '-';
+    row.classList.add(data.route || data.source);
+    if (col === 'unmodified' || col === 'duration') cell.dataset.type = 'numerical';
+    row.append(cell);
+  });
+  return row;
+}
+
+function displayLogs(logs) {
+  const table = document.querySelector('table');
+  const results = table.querySelector('tbody.results');
+  logs.forEach((log) => {
+    const row = buildLog(log);
+    results.prepend(row);
+  });
+  updateTableDisplay(logs.length ? 'results' : 'no-results', table);
+}
+
+async function fetchLogs(owner, repo, form) {
+  const from = document.getElementById('date-from');
+  const fromValue = encodeURIComponent(toISODate(from.value));
+  const to = document.getElementById('date-to');
+  const toValue = encodeURIComponent(toISODate(to.value));
+  const url = `https://admin.hlx.page/log/${owner}/${repo}/main?from=${fromValue}&to=${toValue}`;
+  const req = await fetch(url, { credentials: 'include' });
+  if (req.ok) {
+    const res = await req.json();
+    displayLogs(res.entries);
+    enableForm(form);
+  } else {
+    updateTableError(req.status, req.statusText);
+    enableLogin(owner, repo, form);
+  }
+}
+
+function updateTimeframe(value) {
   const now = new Date();
   const from = document.getElementById('date-from');
   const to = document.getElementById('date-to');
@@ -238,12 +345,10 @@ function updateTimeframe(value, label) {
     const [days, hours, mins] = value.split(':').map((v) => parseInt(v, 10));
     const date = calculatePastDate(days, hours, mins);
     from.value = toDateTimeLocal(date);
-    updateTableCaption(label.toLowerCase());
   } else if (value === 'today') {
     const midnight = now;
     midnight.setHours(0, 0, 0, 0);
     from.value = toDateTimeLocal(midnight);
-    updateTableCaption(value);
   } else if (value === 'custom') {
     [from, to].forEach((field) => {
       field.removeAttribute('readonly');
@@ -252,28 +357,41 @@ function updateTimeframe(value, label) {
 }
 
 function registerListeners(doc) {
-  const GITHUB_FORM = doc.getElementById('github-form');
+  const TIMEFRAME_FORM = doc.getElementById('timeframe-form');
   const GITHUB_FIELD = doc.getElementById('github-url');
   const PICKER_FIELD = doc.getElementById('timeframe');
   const PICKER_OPTIONS = doc.querySelectorAll('.picker-field li');
-  const TABLE = doc.querySelector('table > tbody');
+  const TABLE_FILTER = doc.getElementById('logs-filter');
+  const TABLE = doc.querySelector('table');
+  const RESULTS = TABLE.querySelector('tbody.results');
+  const SOURCE_EXPANDER = doc.getElementById('source-expander');
+  const PATH_EXPANDER = doc.getElementById('path-expander');
   const RESET_BUTTON = doc.getElementById('github-reset');
 
-  GITHUB_FORM.addEventListener('submit', async (e) => {
+  TIMEFRAME_FORM.addEventListener('submit', async (e) => {
     e.preventDefault();
     const data = getFormData(e.srcElement);
     const [, owner, repo] = data['github-url'].pathname.split('/');
     if (owner && repo) {
-      disableForm(GITHUB_FORM);
-      clearTable(TABLE);
+      disableForm(TIMEFRAME_FORM);
       showLoadingButton(e.submitter);
       toggleResetButton(RESET_BUTTON, false);
-      enableLogin(owner, repo, GITHUB_FORM);
+      clearTable(RESULTS);
+      updateTableDisplay('loading', TABLE);
+      fetchLogs(owner, repo, TIMEFRAME_FORM);
     }
   });
 
+  TIMEFRAME_FORM.addEventListener('reset', (e) => {
+    e.preventDefault();
+    GITHUB_FIELD.value = '';
+    PICKER_FIELD.value = 'Last 24 hours';
+    updateTimeframe('1:00:00');
+    updateTableDisplay('no-results', TABLE);
+  });
+
   GITHUB_FIELD.addEventListener('input', () => {
-    clearTable(TABLE);
+    clearTable(RESULTS);
   });
 
   PICKER_FIELD.addEventListener('click', () => {
@@ -287,7 +405,30 @@ function registerListeners(doc) {
       PICKER_FIELD.setAttribute('aria-expanded', false);
       PICKER_OPTIONS.forEach((o) => o.setAttribute('aria-selected', o === option));
       // update to and from
-      updateTimeframe(option.dataset.value, option.textContent);
+      updateTimeframe(option.dataset.value);
+    });
+  });
+
+  const filterTable = (e) => {
+    const filter = e.target.value.toLowerCase();
+    [...RESULTS.children].forEach((row) => {
+      const cells = [...row.children];
+      const match = cells.find((c) => {
+        const text = c.textContent.toLowerCase();
+        return text.includes(filter);
+      });
+      row.setAttribute('aria-hidden', !match);
+    });
+  };
+  const gentleFilterTable = debounce(filterTable, 300);
+  TABLE_FILTER.addEventListener('input', gentleFilterTable);
+
+  [SOURCE_EXPANDER, PATH_EXPANDER].forEach((expander) => {
+    expander.addEventListener('click', () => {
+      const type = expander.id.split('-')[0];
+      const expanded = TABLE.dataset[`${type}Expand`] === 'true';
+      TABLE.dataset[`${type}Expand`] = !expanded;
+      expander.setAttribute('aria-expanded', !expanded);
     });
   });
 }
@@ -306,4 +447,4 @@ function initDateTo(doc) {
 }
 
 initDateTo(document);
-updateTimeframe('1:00:00', 'last 24 hours');
+updateTimeframe('1:00:00');

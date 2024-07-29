@@ -25,7 +25,7 @@
 
     <!-- FORM -->
     <div>
-      <form id="github-form">
+      <form id="timeframe-form">
 
         <div class="form-field url-field">
           <label for="github-url">GitHub URL</label>
@@ -41,8 +41,14 @@
           </button> -->
           <div class="form-field picker-field">
             <label for="timeframe">Timeframe</label>
-            <input name="timeframe" id="timeframe" type="text" aria-controls="timeframe-menu" value="Last 24 hours"
-              aria-expanded="false" readonly />
+            <input
+              name="timeframe"
+              id="timeframe"
+              type="text"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+              value="Last 24 hours"
+              readonly />
             <i class="symbol symbol-chevron"></i>
             <ul class="menu" id="timeframe-menu" aria-labelledby="timeframe" role="listbox">
               <li role="option" aria-selected="false" data-value="0:01:00">Last 1 hour</li>
@@ -76,27 +82,94 @@
 
         <p class="button-wrapper">
           <button type="submit" class="button">Submit</button>
-          <button type="reset" id="github-reset" class="button outline">Clear</button>
+          <button type="reset" id="github-reset" class="button outline">Reset</button>
         </p>
       </form>
     </div>
 
     <!-- TABLE -->
     <div>
+      <div>
+        <form class="filter-form">
+          <div class="form-field search-field">
+            <label for="logs-filter">Filter logs by:</label>
+            <input name="logs-filter" id="logs-filter" type="search" disabled />
+          </div>
+        </form>
+      </div>
       <div class="table">
-        <table aria-hidden="true">
-          <caption>Logs from <span id="logs-from"></span> <span id="to">to</span> <span id="logs-to"></span></caption>
+        <table>
           <thead>
             <tr>
               <th id="logs-timestamp">Timestamp</th>
+              <!-- log type -->
               <th id="logs-route">Route</th>
-              <th id="logs-path">Path</th>
+              <th id="logs-source">Source
+                <button class="logs-expander" type="button" id="source-expander" aria-expanded="false"  
+                  aria-controls="logs-org logs-site logs-user logs-owner logs-repo logs-ref">
+                  <i class="symbol symbol-expand"></i>
+                </button>
+              </th>
+              <!-- request details -->
+              <th id="logs-org">Org</th>
+              <th id="logs-site">Site</th>
+              <th id="logs-user">User</th>
+              <th id="logs-owner">Owner</th>
+              <th id="logs-repo">Repo</th>
+              <th id="logs-ref">Ref</th>
+              <!-- content details -->
+              <th id="logs-path">Path(s)
+                <button class="logs-expander" type="button" id="path-expander" aria-expanded="false"  
+                  aria-controls="logs-unmodified logs-errors">
+                  <i class="symbol symbol-expand"></i>
+                </button>
+              </th>
+              <!-- <th id="logs-updated">Updated*</th>
+              <th id="logs-changes">Changes*</th> -->
+              <th id="logs-unmodified" data-type="numerical">Unmodified</th>
+              <th id="logs-errors">Errors</th>
+              <!-- request/response -->
               <th id="logs-method">Method</th>
               <th id="logs-status">Status</th>
               <th id="logs-duration" data-type="numerical">Duration</th>
             </tr>
           </thead>
-          <tbody></tbody>
+          <tbody class="results" aria-hidden="true"></tbody>
+          <tbody class="no-results" aria-hidden="false">
+            <tr>
+              <td colspan="15">
+                <div>
+                  <span class="icon icon-search"></span>
+                  <div>
+                    <p><strong>No results</strong></p>
+                    <p>Submit the form above to display logs.</p>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tbody class="error" aria-hidden="true">
+            <tr>
+              <td colspan="15">
+                <div>
+                  <span class="icon icon-notice"></span>
+                  <div>
+                    <p><strong>Error</strong></p>
+                    <p>Unable to display the requested logs.</p>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tbody class="loading" aria-hidden="true">
+            <tr>
+              <td colspan="15">
+                <div>
+                  <i class="symbol symbol-loading"></i>
+                </div>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </div>
     </div>
