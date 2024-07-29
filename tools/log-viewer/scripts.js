@@ -334,7 +334,7 @@ async function fetchLogs(owner, repo, form) {
     }
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error('Fetch error:', error);
+    console.error('Fetch error:', error, error.name, error.message);
     // updateTableError('Fetch error', error.message);
     // enableLogin(owner, repo, form);
   }
