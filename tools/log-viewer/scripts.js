@@ -322,14 +322,21 @@ async function fetchLogs(owner, repo, form) {
   const to = document.getElementById('date-to');
   const toValue = encodeURIComponent(toISODate(to.value));
   const url = `https://admin.hlx.page/log/${owner}/${repo}/main?from=${fromValue}&to=${toValue}`;
-  const req = await fetch(url, { credentials: 'include' });
-  if (req.ok) {
-    const res = await req.json();
-    displayLogs(res.entries);
-    enableForm(form);
-  } else {
-    updateTableError(req.status, req.statusText);
-    enableLogin(owner, repo, form);
+  try {
+    const req = await fetch(url, { credentials: 'include' });
+    if (req.ok) {
+      const res = await req.json();
+      displayLogs(res.entries);
+      enableForm(form);
+    } else {
+      updateTableError(req.status, req.statusText);
+      enableLogin(owner, repo, form);
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Fetch error:', error);
+    // updateTableError('Fetch error', error.message);
+    // enableLogin(owner, repo, form);
   }
 }
 
