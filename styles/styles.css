@@ -179,19 +179,6 @@ i.symbol::after {
   position: absolute;
 }
 
-i.symbol.symbol-loading {
-  border: var(--border-m) solid;
-  border-radius: 50%;
-}
-
-i.symbol.symbol-loading::after {
-  inset: calc(-1 * var(--border-m));
-  border: inherit;
-  border-right-color: var(--color-link);
-  border-radius: inherit;
-  animation: loading 1.5s ease-in-out infinite;
-}
-
 i.symbol.symbol-chevron::before {
   top: calc(50% - (1ch / 4));
   left: 50%;
@@ -205,9 +192,58 @@ i.symbol.symbol-chevron::before {
   transition: transform 0.2s;
 }
 
+i.symbol.symbol-expand::before,
+i.symbol.symbol-expand::after {
+  top: 50%;
+}
+
+i.symbol.symbol-expand::before {
+  left: 0.2ch;
+  border: 0.5ch solid currentcolor;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  width: 1ch;
+  height: 1ch;
+  transform: translateY(-50%) rotate(-45deg);
+}
+
+i.symbol.symbol-expand::after {
+  right: 0.2ch;
+  border: 0.5ch solid currentcolor;
+  border-left-color: transparent;
+  border-bottom-color: transparent;
+  width: 1ch;
+  height: 1ch;
+  transform: translateY(-50%) rotate(45deg);
+}
+
+i.symbol.symbol-loading {
+  border: var(--border-m) solid;
+  border-radius: 50%;
+}
+
+i.symbol.symbol-loading::after {
+  inset: calc(-1 * var(--border-m));
+  border: inherit;
+  border-right-color: var(--color-link);
+  border-radius: inherit;
+  animation: loading 1.5s ease-in-out infinite;
+}
+
 @keyframes loading {
   from { transform: rotate(0deg) }
   to { transform: rotate(360deg) }
+}
+
+.status-light::before {
+  content: '';
+  display: inline-block;
+  height: 0.5em;
+  width: 0.5em;
+  margin-right: 0.9ch;
+  border-radius: 50%;
+  transform: translateY(-0.1em);
+  background-color: currentcolor;
 }
 
 /* typography */
@@ -509,6 +545,10 @@ select[readonly]:focus {
   border: var(--border-m) solid var(--color-link);
 }
 
+input[type='search'] {
+  border-radius: calc(1.6em + (2 * 0.4em));
+}
+
 input[type='checkbox'],
 input[type='radio'] {
   width: unset;
@@ -657,7 +697,7 @@ table + .form-field,
   padding: calc(0.4em + var(--border-m));
   background-color: var(--color-background);
   box-shadow: var(--shadow-default);
-  z-index: 1;
+  z-index: 2;
 }
 
 .form-field.picker-field input[aria-expanded='false'] ~ ul {
