@@ -64,7 +64,6 @@
 
 .log-viewer ul.menu:not([hidden]) + .datetime-wrapper {
   display: none;
-  outline: 2px solid red;
 }
 
 .log-viewer .picker-field input ~ .datetime-wrapper .form-field {
