@@ -47,6 +47,7 @@
 .log-viewer .datetime-wrapper {
   display: none;
 }
+
 .log-viewer .picker-field input[data-custom='true'] ~ .datetime-wrapper {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
