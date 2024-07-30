@@ -342,7 +342,12 @@ async function fetchLogs(owner, repo, form) {
 
 function toggleCustomTimeframe(enabled) {
   const picker = document.getElementById('timeframe');
+  const datetime = picker.parentElement.querySelector('.datetime-wrapper');
   picker.dataset.custom = enabled;
+  datetime.hidden = !enabled;
+  [...datetime.children].forEach((child) => {
+    child.setAttribute('aria-hidden', !enabled);
+  });
 }
 
 function updateTimeframe(value) {
@@ -373,7 +378,8 @@ function registerListeners(doc) {
   const TIMEFRAME_FORM = doc.getElementById('timeframe-form');
   const GITHUB_FIELD = doc.getElementById('github-url');
   const PICKER_FIELD = doc.getElementById('timeframe');
-  const PICKER_OPTIONS = doc.querySelectorAll('.picker-field li');
+  const PICKER_DROPDOWN = doc.querySelector('.picker-field ul');
+  const PICKER_OPTIONS = PICKER_DROPDOWN.querySelectorAll('li');
   const TABLE_FILTER = doc.getElementById('logs-filter');
   const TABLE = doc.querySelector('table');
   const RESULTS = TABLE.querySelector('tbody.results');
@@ -410,12 +416,14 @@ function registerListeners(doc) {
   PICKER_FIELD.addEventListener('click', () => {
     const expanded = PICKER_FIELD.getAttribute('aria-expanded') === 'true';
     PICKER_FIELD.setAttribute('aria-expanded', !expanded);
+    PICKER_DROPDOWN.hidden = expanded;
   });
 
   PICKER_OPTIONS.forEach((option) => {
     option.addEventListener('click', () => {
       PICKER_FIELD.value = option.textContent;
       PICKER_FIELD.setAttribute('aria-expanded', false);
+      PICKER_DROPDOWN.hidden = true;
       PICKER_OPTIONS.forEach((o) => o.setAttribute('aria-selected', o === option));
       // update to and from
       updateTimeframe(option.dataset.value);
