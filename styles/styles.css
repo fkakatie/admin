@@ -179,6 +179,44 @@ i.symbol::after {
   position: absolute;
 }
 
+i.symbol.symbol-chevron::before {
+  top: calc(50% - (1ch / 4));
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  width: 1ch;
+  height: 1ch;
+  border: var(--border-m) solid currentcolor;
+  border-top-color: transparent;
+  border-left-color: transparent;
+  border-radius: var(--border-m);
+  transition: transform 0.2s;
+}
+
+i.symbol.symbol-expand::before,
+i.symbol.symbol-expand::after {
+  top: 50%;
+}
+
+i.symbol.symbol-expand::before {
+  left: 0.2ch;
+  border: 0.5ch solid currentcolor;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  width: 1ch;
+  height: 1ch;
+  transform: translateY(-50%) rotate(-45deg);
+}
+
+i.symbol.symbol-expand::after {
+  right: 0.2ch;
+  border: 0.5ch solid currentcolor;
+  border-left-color: transparent;
+  border-bottom-color: transparent;
+  width: 1ch;
+  height: 1ch;
+  transform: translateY(-50%) rotate(45deg);
+}
+
 i.symbol.symbol-loading {
   border: var(--border-m) solid;
   border-radius: 50%;
@@ -195,6 +233,17 @@ i.symbol.symbol-loading::after {
 @keyframes loading {
   from { transform: rotate(0deg) }
   to { transform: rotate(360deg) }
+}
+
+.status-light::before {
+  content: '';
+  display: inline-block;
+  height: 0.5em;
+  width: 0.5em;
+  margin-right: 0.9ch;
+  border-radius: 50%;
+  transform: translateY(-0.1em);
+  background-color: currentcolor;
 }
 
 /* typography */
@@ -496,6 +545,10 @@ select[readonly]:focus {
   border: var(--border-m) solid var(--color-link);
 }
 
+input[type='search'] {
+  border-radius: calc(1.6em + (2 * 0.4em));
+}
+
 input[type='checkbox'],
 input[type='radio'] {
   width: unset;
@@ -602,6 +655,68 @@ input[type='color'] ~ span {
 table + .form-field,
 .form-field + .form-field {
   margin-top: var(--spacing-l);
+}
+
+.form-field.picker-field {
+  position: relative;
+}
+
+.form-field.picker-field i.symbol {
+  position: absolute;
+  right: 0.85em;
+  top: calc((var(--body-size-m) * var(--line-height-l)) + 0.5em + 0.4em);
+}
+
+.form-field.picker-field input {
+  border-color: var(--gray-100);
+  background-color: var(--gray-100);
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.form-field.picker-field input:hover {
+  border-color: var(--gray-200);
+  background-color: var(--gray-200);
+}
+
+.form-field.picker-field input[aria-expanded='true'] {
+  outline: var(--border-m) solid var(--color-link);
+  outline-offset: var(--border-m);
+  border-color: var(--gray-200);
+  background-color: var(--gray-200);
+}
+
+.form-field.picker-field input ~ ul {
+  list-style: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + var(--spacing-xs));
+  margin: 0;
+  border-radius: var(--rounding-m);
+  padding: calc(0.4em + var(--border-m));
+  background-color: var(--color-background);
+  box-shadow: var(--shadow-default);
+  z-index: 2;
+}
+
+.form-field.picker-field input[aria-expanded='false'] ~ ul {
+  display: none;
+}
+
+.form-field.picker-field input[aria-expanded='true'] ~ i.symbol::before {
+  transform: translate(-50%, 0%) rotate(-135deg);
+}
+
+.form-field.picker-field input ~ ul li {
+  padding: 0.4em 0;
+  padding-left: 2rem;
+  cursor: pointer;
+}
+
+.form-field.picker-field input ~ ul li:hover {
+  border-radius: var(--rounding-m);
+  background-color: var(--gray-100);
 }
 
 .form-error {
