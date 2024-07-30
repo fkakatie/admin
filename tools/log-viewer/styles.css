@@ -47,8 +47,7 @@
 .log-viewer .datetime-wrapper {
   display: none;
 }
-
-.log-viewer .picker-field input[aria-expanded='false'][data-custom='true'] ~ .datetime-wrapper {
+.log-viewer .picker-field input[data-custom='true'] ~ .datetime-wrapper {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--spacing-m) var(--spacing-xs);
@@ -60,7 +59,12 @@
   padding: calc(0.4em + var(--border-m));
   background-color: var(--color-background);
   box-shadow: var(--shadow-default);
-  z-index: 2;
+  z-index: 1;
+}
+
+.log-viewer ul.menu:not([hidden]) + .datetime-wrapper {
+  display: none;
+  outline: 2px solid red;
 }
 
 .log-viewer .picker-field input ~ .datetime-wrapper .form-field {
@@ -72,19 +76,19 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .log-viewer .picker-field input[aria-expanded='false'][data-custom='true'] ~ .datetime-wrapper {
+  .log-viewer .picker-field input[data-custom='true'] ~ .datetime-wrapper {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (width >= 900px) {
-  .log-viewer .picker-field input[aria-expanded='false'][data-custom='true'] ~ .datetime-wrapper {
+  .log-viewer .picker-field input[data-custom='true'] ~ .datetime-wrapper {
     grid-template-columns: minmax(0, 1fr);
   }
 }
 
 @media (width >= 1200px) {
-  .log-viewer .picker-field input[aria-expanded='false'][data-custom='true'] ~ .datetime-wrapper {
+  .log-viewer .picker-field input[data-custom='true'] ~ .datetime-wrapper {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     position: absolute;
   }
