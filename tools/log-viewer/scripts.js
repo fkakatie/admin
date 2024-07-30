@@ -340,6 +340,11 @@ async function fetchLogs(owner, repo, form) {
   }
 }
 
+function toggleCustomTimeframe(enabled) {
+  const picker = document.getElementById('timeframe');
+  picker.dataset.custom = enabled;
+}
+
 function updateTimeframe(value) {
   const now = new Date();
   const from = document.getElementById('date-from');
@@ -348,6 +353,7 @@ function updateTimeframe(value) {
     field.readOnly = true;
   });
   to.value = toDateTimeLocal(now);
+  toggleCustomTimeframe(value === 'custom');
   if (value.includes(':')) {
     const [days, hours, mins] = value.split(':').map((v) => parseInt(v, 10));
     const date = calculatePastDate(days, hours, mins);

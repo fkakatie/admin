@@ -3,7 +3,6 @@
     display: grid;
     grid-template:
       'url timeframe' auto
-      'datetime datetime' 
       'button button' 1fr / 1fr 1fr;
     align-items: baseline;
     gap: 0 var(--spacing-l);
@@ -15,10 +14,6 @@
 
   .log-viewer form#timeframe-form > .timeframe-wrapper {
     grid-area: timeframe;
-  }
-
-  .log-viewer form#timeframe-form > .datetime-wrapper {
-    grid-area: datetime;
   }
 
   .log-viewer form#timeframe-form > .button-wrapper {
@@ -50,17 +45,48 @@
 }
 
 .log-viewer .datetime-wrapper {
-  display: grid;
-  gap: var(--spacing-l);
+  display: none;
 }
 
-.log-viewer .datetime-wrapper .form-field {
+.log-viewer .picker-field input[aria-expanded='false'][data-custom='true'] ~ .datetime-wrapper {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--spacing-m) var(--spacing-xs);
+  left: 0;
+  right: 0;
+  top: calc(100% + var(--spacing-xs));
+  margin-top: var(--spacing-xs);
+  border-radius: var(--rounding-m);
+  padding: calc(0.4em + var(--border-m));
+  background-color: var(--color-background);
+  box-shadow: var(--shadow-default);
+  z-index: 2;
+}
+
+.log-viewer .picker-field input ~ .datetime-wrapper .form-field {
   margin-top: 0;
 }
 
 @media (width >= 740px) {
   .log-viewer .datetime-wrapper {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .log-viewer .picker-field input[aria-expanded='false'][data-custom='true'] ~ .datetime-wrapper {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (width >= 900px) {
+  .log-viewer .picker-field input[aria-expanded='false'][data-custom='true'] ~ .datetime-wrapper {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (width >= 1200px) {
+  .log-viewer .picker-field input[aria-expanded='false'][data-custom='true'] ~ .datetime-wrapper {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    position: absolute;
   }
 }
 
@@ -134,6 +160,7 @@
   display: none;
 }
 
+/* stylelint-disable no-descending-specificity */
 .log-viewer table[data-source-expand='true'] thead th:nth-child(n + 4),
 .log-viewer table[data-source-expand='true'] tbody.results td:nth-child(n + 4) {
   display: table-cell;
@@ -144,9 +171,8 @@
 }
 
 .log-viewer table[data-source-expand='true'] thead th:nth-child(n + 10)::before {
-  background-color: initial;
+  background-color: var(--color-background);
 }
-
 
 .log-viewer table thead th:nth-child(n + 10),
 .log-viewer table tbody.results td:nth-child(n + 10) {
@@ -171,7 +197,7 @@
 }
 
 .log-viewer table[data-path-expand='true'] thead th:nth-child(n + 13)::before {
-  background-color: initial;
+  background-color: var(--color-background);
 }
 
 .log-viewer table thead th:nth-child(n + 13),
