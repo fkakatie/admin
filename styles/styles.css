@@ -664,7 +664,7 @@ table + .form-field,
 .form-field.picker-field i.symbol {
   position: absolute;
   right: 0.85em;
-  bottom: calc((((1em * var(--line-height-m)) + (2 * 0.4em)) / 2) - (1em / 2));
+  top: calc((var(--body-size-m) * var(--line-height-l)) + 0.5em + 0.4em);
 }
 
 .form-field.picker-field input {
