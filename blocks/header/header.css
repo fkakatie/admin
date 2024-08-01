@@ -227,11 +227,15 @@ header .nav-hamburger {
 
 header .nav-hamburger button {
   box-sizing: content-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 1em;
   height: 1em;
   border-radius: 50%;
   padding: 0.4em;
   background-color: transparent;
+  color: var(--color-text);
   transition: background-color 0.2s;
   cursor: pointer;
 }
@@ -246,6 +250,7 @@ header .nav-hamburger i.symbol-hamburger::before,
 header .nav-hamburger i.symbol-hamburger::after {
   width: 100%;
   height: var(--border-m);
+  background-color: currentcolor;
 }
 
 header .nav-hamburger i.symbol-hamburger {
