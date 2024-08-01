@@ -133,17 +133,24 @@ main > .section:first-of-type {
 }
 
 main > .section:last-of-type {
+  margin-bottom: 0;
   border-bottom-left-radius: var(--rounding-xl);
   border-bottom-right-radius: var(--rounding-xl);
 }
 
 /* section metadata */
+main .section.light,
+main .section.dark {
+  padding: var(--horizontal-spacing) 0;
+}
+
 main .section.light {
-  background-color: var(--light-color);
+  background-color: var(--gray-100);
 }
 
 main .section.dark {
-  background-color: var(--gray-400);
+  background-color: var(--gray-600);
+  color: var(--gray-25);
 }
 
 /* images and icons */
@@ -345,7 +352,7 @@ var {
 /* links */
 a:any-link {
   color: var(--color-link);
-  text-decoration: none;
+  text-decoration: underline;
   transition: color 0.2s;
 }
 
@@ -377,6 +384,7 @@ button.button {
   font-size: inherit;
   font-weight: var(--weight-medium);
   text-align: center;
+  text-decoration: none;
   transition: border-color 0.2s, background-color 0.2s, color 0.2s;
   cursor: pointer;
 }

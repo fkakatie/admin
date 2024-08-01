@@ -1,5 +1,4 @@
 import {
-  sampleRUM,
   // buildBlock,
   loadHeader,
   loadFooter,
@@ -7,12 +6,12 @@ import {
   decorateSections,
   decorateBlocks,
   decorateTemplateAndTheme,
-  waitForLCP,
-  loadBlocks,
+  waitForFirstImage,
+  loadSection,
+  loadSections,
   loadCSS,
+  sampleRUM,
 } from './aem.js';
-
-const LCP_BLOCKS = []; // add your LCP blocks to the list
 
 /**
  * load fonts.css and set a session storage flag
@@ -45,7 +44,11 @@ export function swapIcons() {
           let fill = svg.querySelector('[fill]');
           if (fill) fill = fill.getAttribute('fill').toLowerCase().includes('currentcolor');
           // replace image with SVG, ensuring color inheritance
-          if ((style || fill) || (!style && !fill)) icon.replaceWith(svg);
+          if ((style || fill) || (!style && !fill)) {
+            const p = icon.closest('p');
+            if (p) p.removeAttribute('class');
+            icon.replaceWith(svg);
+          }
           observer.disconnect();
         }
       });
@@ -60,7 +63,7 @@ export function swapIcons() {
  */
 // function buildAutoBlocks(main) {
 //   try {
-//     // buildHeroBlock(main);
+//     // build auto blocks
 //   } catch (error) {
 //     // eslint-disable-next-line no-console
 //     console.error('Auto Blocking failed', error);
@@ -122,8 +125,10 @@ async function loadEager(doc) {
   if (main) {
     decorateMain(main);
     document.body.classList.add('appear');
-    await waitForLCP(LCP_BLOCKS);
+    await loadSection(main.querySelector('.section'), waitForFirstImage);
   }
+
+  sampleRUM.enhance();
 
   try {
     /* if desktop (proxy for fast connection) or fonts already loaded, load fonts.css */
@@ -141,7 +146,7 @@ async function loadEager(doc) {
  */
 async function loadLazy(doc) {
   const main = doc.querySelector('main');
-  await loadBlocks(main);
+  await loadSections(main);
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
@@ -153,10 +158,6 @@ async function loadLazy(doc) {
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
   swapIcons(main);
-
-  sampleRUM('lazy');
-  sampleRUM.observe(main.querySelectorAll('div[data-block-name]'));
-  sampleRUM.observe(main.querySelectorAll('picture > img'));
 }
 
 /**

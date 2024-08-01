@@ -6,6 +6,7 @@ footer {
 
 footer a:any-link {
   color: currentcolor;
+  text-decoration: none;
 }
 
 footer ul {

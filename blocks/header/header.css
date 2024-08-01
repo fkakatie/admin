@@ -5,6 +5,7 @@ header {
 
 header a:any-link {
   color: currentcolor;
+  text-decoration: none;
 }
 
 header ul {
@@ -194,6 +195,10 @@ header .nav-tools {
   line-height: 0;
 }
 
+header .nav-tools p {
+  margin: 0;
+}
+
 header .nav-tools a.button {
   box-sizing: content-box;
   width: 1em;
@@ -208,6 +213,7 @@ header .nav-tools a.button {
 
 header .nav-tools a.button:hover {
   background-color: var(--gray-100);
+  color: var(--color-text);
 }
 
 @media (width >= 900px) {
