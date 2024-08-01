@@ -34,11 +34,11 @@
 
   /* spacing */
   --spacing-xxl: var(--spacing-600);
-   --spacing-xl: var(--spacing-500);
-    --spacing-l: var(--spacing-400);
-    --spacing-m: var(--spacing-300);
-    --spacing-s: var(--spacing-200);
-   --spacing-xs: var(--spacing-100);
+  --spacing-xl: var(--spacing-500);
+  --spacing-l: var(--spacing-400);
+  --spacing-m: var(--spacing-300);
+  --spacing-s: var(--spacing-200);
+  --spacing-xs: var(--spacing-100);
 
   /* shadows */
   --shadow-default: 0 1px 6px 0 var(--transparent-black-300);
@@ -65,7 +65,9 @@
   src: local('Arial');
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -627,11 +629,11 @@ input[type='color']::-webkit-color-swatch {
 }
 
 input[type='color']::-webkit-color-swatch-wrapper {
-	padding: 0;
+  padding: 0;
 }
 
 input[type='color']::-webkit-color-swatch {
-	border: var(--border-m) solid var(--transparent-black-100);
+  border: var(--border-m) solid var(--transparent-black-100);
   border-radius: var(--rounding-m);
 }
 
@@ -679,13 +681,6 @@ table + .form-field,
   background-color: var(--gray-200);
 }
 
-.form-field.picker-field input[aria-expanded='true'] {
-  outline: var(--border-m) solid var(--color-link);
-  outline-offset: var(--border-m);
-  border-color: var(--gray-200);
-  background-color: var(--gray-200);
-}
-
 .form-field.picker-field input ~ ul {
   list-style: none;
   position: absolute;
@@ -723,7 +718,7 @@ table + .form-field,
   margin-top: 0.5em;
   color: var(--red-900);
 }
-  
+
 .field-help-text {
   margin-top: 0.5em;
 }
