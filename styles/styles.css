@@ -34,11 +34,11 @@
 
   /* spacing */
   --spacing-xxl: var(--spacing-600);
-  --spacing-xl: var(--spacing-500);
-  --spacing-l: var(--spacing-400);
-  --spacing-m: var(--spacing-300);
-  --spacing-s: var(--spacing-200);
-  --spacing-xs: var(--spacing-100);
+   --spacing-xl: var(--spacing-500);
+    --spacing-l: var(--spacing-400);
+    --spacing-m: var(--spacing-300);
+    --spacing-s: var(--spacing-200);
+   --spacing-xs: var(--spacing-100);
 
   /* shadows */
   --shadow-default: 0 1px 6px 0 var(--transparent-black-300);
